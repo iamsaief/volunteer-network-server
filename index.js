@@ -17,7 +17,28 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 client.connect((err) => {
 	const eventsCollection = client.db("volunteerNetwork").collection("eventsCollection");
+	const baseCollection = client.db("volunteerNetwork").collection("baseCollection");
 	console.log("DB connected 🚀");
+
+	/* API: Adding base data */
+	app.post("/addBaseData", (req, res) => {
+		const baseData = req.body;
+		baseCollection.insertMany(baseData).then((result) => {
+			console.log(result);
+			console.log(result.insertedCount, "All Data Inserted ✅");
+			res.send(result.insertedCount);
+		});
+	});
+
+	/* API: Getting Base data on home page */
+	app.get("/home", (req, res) => {
+		baseCollection
+			.find({})
+			.limit(20)
+			.toArray((err, docs) => {
+				res.send(docs);
+			});
+	});
 
 	/* API: Register Volunteer */
 	app.post("/registerVolunteer", (req, res) => {
@@ -44,6 +65,10 @@ client.connect((err) => {
 			console.log(result, "Deleted ⚠️");
 			res.send(result.deletedCount > 0);
 		});
+	});
+
+	app.get("/", (req, res) => {
+		res.send("Hello from Express, API is working 👨🏻‍💻");
 	});
 });
 
