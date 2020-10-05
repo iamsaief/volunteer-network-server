@@ -32,19 +32,16 @@ client.connect((err) => {
 
 	/* API: Getting Base data on home page */
 	app.get("/home", (req, res) => {
-		baseCollection
-			.find({})
-			.limit(20)
-			.toArray((err, docs) => {
-				res.send(docs);
-			});
+		baseCollection.find({}).toArray((err, docs) => {
+			res.send(docs);
+		});
 	});
 
 	/* API: Register Volunteer */
 	app.post("/registerVolunteer", (req, res) => {
 		const newVolunteer = req.body;
 		eventsCollection.insertOne(newVolunteer).then((result) => {
-			console.log(result, "Product Inserted ✅");
+			console.log(result, "Task Inserted ✅");
 			res.send(result.insertedCount > 0);
 		});
 	});
@@ -64,6 +61,15 @@ client.connect((err) => {
 		eventsCollection.deleteOne({ _id: ObjectId(req.params.id) }).then((result) => {
 			console.log(result, "Deleted ⚠️");
 			res.send(result.deletedCount > 0);
+		});
+	});
+
+	/* ADMIN API: Create new event task */
+	app.post("/admin/addEvent", (req, res) => {
+		const newTask = req.body;
+		baseCollection.insertOne(newTask).then((result) => {
+			console.log(result, "Task Inserted ✅");
+			res.send(result.insertedCount > 0);
 		});
 	});
 
