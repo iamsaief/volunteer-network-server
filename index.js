@@ -58,7 +58,7 @@ client.connect((err) => {
 		});
 	});
 
-	/* API: Deleting event task */
+	/* API: Deleting an event task */
 	app.delete("/deleteTask/:id", (req, res) => {
 		console.log(req.params.id);
 		eventsCollection.deleteOne({ _id: ObjectId(req.params.id) }).then((result) => {
@@ -67,6 +67,24 @@ client.connect((err) => {
 		});
 	});
 
+	/* ADMIN API: Getting volunteer list */
+	app.get("/loadVolunteerList", (req, res) => {
+		eventsCollection.find({}).toArray((err, docs) => {
+			res.send(docs);
+			console.log(docs);
+		});
+	});
+
+	/* ADMIN API: Deleting an event task */
+	app.delete("/admin/deleteTask/:id", (req, res) => {
+		console.log(req.params.id);
+		eventsCollection.deleteOne({ _id: ObjectId(req.params.id) }).then((result) => {
+			console.log(result, "Task deleted ⚠️");
+			res.send(result.deletedCount > 0);
+		});
+	});
+
+	/* API : Default */
 	app.get("/", (req, res) => {
 		res.send("Hello from Express, API is working 👨🏻‍💻");
 	});
